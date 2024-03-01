@@ -136,4 +136,5 @@ Istio dashboards can be found [here](https://grafana.com/orgs/istio/dashboards) 
 
 ## References
 [Debugging microservices on Kubernetes with Istio, OpenTelemetry and Tempo — Part 1](https://medium.com/otomi-platform/debugging-microservices-on-k8s-with-istio-opentelemetry-and-tempo-4c36c97d6099)
+
 [Debugging microservices on Kubernetes with Istio, OpenTelemetry and Tempo — Part 2](https://medium.com/otomi-platform/debugging-microservices-on-kubernetes-with-istio-opentelemetry-and-tempo-part-2-e10b951029a0)
