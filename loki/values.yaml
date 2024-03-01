@@ -1,0 +1,66 @@
+loki:
+  auth_enabled: false
+  schemaConfig:
+    configs:
+    - from: "2020-12-11"
+      index:
+        period: 24h
+        prefix: index_
+      object_store: azure
+      schema: v11
+      store: boltdb-shipper
+  storage:
+    bucketNames:
+      chunks: loki
+    type: azure
+    azure:
+      accountName: stdstoragelog01
+      accountKey: ${STORAGE_ACCOUNT_ACCESS_KEY}
+  extraArgs:
+  - "-config.expand-env=true"
+  extraEnv:
+  - name: STORAGE_ACCOUNT_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: stdstoragelog01-access-key
+        key: accountKey
+
+write:
+  extraArgs:
+  - "-config.expand-env=true"
+  extraEnv:
+  - name: STORAGE_ACCOUNT_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: stdstoragelog01-access-key
+        key: accountKey
+
+read:
+  extraArgs:
+  - "-config.expand-env=true"
+  extraEnv:
+  - name: STORAGE_ACCOUNT_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: stdstoragelog01-access-key
+        key: accountKey
+
+backend:
+  extraArgs:
+  - "-config.expand-env=true"
+  extraEnv:
+  - name: STORAGE_ACCOUNT_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: stdstoragelog01-access-key
+        key: accountKey
+
+test:
+  enabled: false
+
+monitoring:
+  dashboards:
+    enabled: true
+    namespace: prometheus
+  lokiCanary:
+    enabled: false
