@@ -1,7 +1,7 @@
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
-  name: otel-collector
+  name: opentelemetry
 spec:
   config: |
     receivers:
@@ -10,35 +10,28 @@ spec:
           grpc:
           http:
     processors:
-      memory_limiter:
-        check_interval: 1s
-        limit_percentage: 75
-        spike_limit_percentage: 15
       batch:
-        send_batch_size: 10000
-        timeout: 10s
     exporters:
-      logging:
-        loglevel: info
+      debug:
+        verbosity: basic
       otlp:
-        endpoint: tempo-distributor.tempo.svc.cluster.local:4317
-        sending_queue:
-          enabled: true
-          num_consumers: 100
-          queue_size: 10000
-        retry_on_failure:
-          enabled: true
+        endpoint: tempo-distributor.observability.svc.cluster.local:4317
         tls:
           insecure: true
+      loki:
+        endpoint: http://loki-gateway.observability.svc.cluster.local/loki/api/v1/push
     service:
       pipelines:
         traces:
-          receivers:
-          - otlp
-          processors:
-            - memory_limiter
-            - batch
-          exporters:
-          - logging
-          - otlp
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, otlp]
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug, loki]
   mode: deployment

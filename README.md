@@ -64,7 +64,7 @@ kubectl create secret generic stdstoragelog01-access-key -n tempo --from-literal
 Install Tempo with `tempo-distributed` Helm chart:
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
-helm update
+helm repo update
 helm install -f tempo/values.yaml tempo grafana/tempo-distributed -n tempo
 ```
 
@@ -82,7 +82,7 @@ kubectl create secret generic stdstoragelog01-access-key -n loki --from-literal=
 Install Loki with `loki` Helm chart:
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
-helm update
+helm repo update
 helm install -f loki/values.yaml -n loki loki grafana/loki
 ```
 

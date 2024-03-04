@@ -1,9 +1,12 @@
 apiVersion: telemetry.istio.io/v1alpha1
 kind: Telemetry
 metadata:
-  name: otel-tracing
+  name: mesh-observability
   namespace: istio-system
 spec:
+  accessLogging:
+  - providers:
+    - name: otel
   tracing:
   - providers:
     - name: otel-tracing

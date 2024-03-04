@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: otel-test
+  name: otel-test
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: otel-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: otel-test
+    version: v1
+  name: otel-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-test
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: otel-test
+        version: v1
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
+    spec:
+      containers:
+      - image: npuichigo/otel_test
+        imagePullPolicy: Always
+        name: otel-test
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        securityContext:
+          privileged: false
