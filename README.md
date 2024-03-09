@@ -22,6 +22,8 @@ kubectl apply -f istio/otel-tracing.yaml
 ```
 
 ### OpenTelemetry
+Install cert-manager following https://cert-manager.io/docs/installation/helm/
+
 Install `opentelemetry-operator` and related CRDs:
 ```bash
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
