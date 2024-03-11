@@ -1,0 +1,15 @@
+secrets:
+  name: myminio-env-configuration
+  accessKey: minio
+  secretKey: 10aiLoveyuczha!
+
+tenant:
+  name: ibyteai-data 
+
+  pools:
+    - servers: 1
+      volumesPerServer: 1
+      storageClassName: nfs-client 
+
+  certificate:
+    requestAutoCert: false

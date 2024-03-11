@@ -21,19 +21,39 @@ To enable the extensionProvider, we need to create a Telemetry resource:
 kubectl apply -f istio/otel-tracing.yaml
 ```
 
+### Minio
+Install minio operator
+```bash
+helm install --namespace minio-operator --create-namespace operator minio-operator/operator
+```
+
+Install minio tenant
+```bash
+helm install --namespace minio -f minio/values.yaml minio-tenant minio-operator/tenant
+```
+
+Create bucket for use with command line or console
+```bash
+kubectl port-forward svc/MINIO_TENANT_NAME-hl 9000 -n MINIO_TENANT_NAMESPACE
+
+mc alias set myminio https://localhost:9000 minio minio123 --insecure
+mc mb myminio/mybucket --insecure
+```
+
 ### OpenTelemetry
+Install cert-manager following https://cert-manager.io/docs/installation/helm/
+
 Install `opentelemetry-operator` and related CRDs:
 ```bash
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm repo update
 
-kubectl create ns otel
-helm install opentelemetry-operator open-telemetry/opentelemetry-operator -n otel
+helm install opentelemetry-operator open-telemetry/opentelemetry-operator -n observability
 ```
 
 Configure the OpenTelemetry collector to receive, process and export the collected telemetry to the desired backends (which will be deployed soon) with a `OpenTelemetryCollector` resource:
 ```bash
-kubectl apply -f opentelemetry/otel-collector.yaml -n otel
+kubectl apply -f opentelemetry/otel-collector.yaml -n observability
 ```
 
 ### Prometheus
@@ -57,15 +77,14 @@ Tempo supports S3, GCS, Azure or filesystem as storage backends. In this example
 
 Create a `Secret` with the Azure Storage Account credentials before installing Tempo:
 ```bash
-kubectl create ns tempo
-kubectl create secret generic stdstoragelog01-access-key -n tempo --from-literal=STORAGE_ACCOUNT_ACCESS_KEY=<account-key>
+kubectl create secret generic stdstoragelog01-access-key -n observability --from-literal=STORAGE_ACCOUNT_ACCESS_KEY=<account-key>
 ```
 
 Install Tempo with `tempo-distributed` Helm chart:
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-helm install -f tempo/values.yaml tempo grafana/tempo-distributed -n tempo
+helm install -f tempo/values.yaml tempo grafana/tempo-distributed -n observability
 ```
 
 You need to check if `OpenTelemetryCollector` is correctly sending traces to Tempo.
@@ -75,15 +94,14 @@ Same as Tempo, Loki needs a storage backend too. In this example, we will use Az
 
 Create a `Secret` with the Azure Storage Account credentials before installing Loki:
 ```bash
-kubectl create ns loki
-kubectl create secret generic stdstoragelog01-access-key -n loki --from-literal=STORAGE_ACCOUNT_ACCESS_KEY=<account-key>
+kubectl create secret generic stdstoragelog01-access-key -n observability --from-literal=STORAGE_ACCOUNT_ACCESS_KEY=<account-key>
 ```
 
 Install Loki with `loki` Helm chart:
 ```bash
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-helm install -f loki/values.yaml -n loki loki grafana/loki
+helm install -f loki/values.yaml -n observability loki grafana/loki
 ```
 
 Export log from `OpenTelemetryCollector` to Loki is still experimental. Here we configure the `log` components installed on each node to send logs to Loki with a `PodLogs` resource:
@@ -105,7 +123,7 @@ grafana:
     type: tempo
     uid: tempo
     access: proxy
-    url: http://tempo-query-frontend.tempo:3100
+    url: http://tempo-query-frontend.observability:3100
     jsonData:
       nodeGraph:
         enabled: true
@@ -120,7 +138,7 @@ grafana:
     type: loki
     uid: loki
     access: proxy
-    url: http://loki-gateway.loki
+    url: http://loki-gateway.observability
     jsonData:
       derivedFields:
       - datasourceName: Tempo

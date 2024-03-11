@@ -7,61 +7,48 @@ traces:
 
 storage:
   trace:
-    backend: azure
-    azure:
-      container_name: tempo
-      storage_account_name: stdstoragelog01
-      storage_account_key: ${STORAGE_ACCOUNT_ACCESS_KEY}
+    backend: s3
+    s3:
+      bucket: ${bucket}
+      endpoint: ${endpoint}
+      access_key: ${access_key_id}
+      secret_key: ${access_key_secret} 
+      insecure: true
 
 distributor:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 compactor:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 ingester:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 querier:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 queryFrontend:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 metaMonitoring:
   serviceMonitor:
