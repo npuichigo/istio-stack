@@ -13,7 +13,7 @@ spec:
       batch:
     exporters:
       debug:
-        verbosity: detailed
+        verbosity: basic
       otlp:
         endpoint: tempo-distributor.observability.svc.cluster.local:4317
         tls:

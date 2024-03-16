@@ -6,54 +6,46 @@ loki:
       index:
         period: 24h
         prefix: index_
-      object_store: azure
+      object_store: s3
       schema: v11
       store: boltdb-shipper
   storage:
     bucketNames:
-      chunks: loki
-    type: azure
-    azure:
-      accountName: stdstoragelog01
-      accountKey: ${STORAGE_ACCOUNT_ACCESS_KEY}
+      chunks: loki-chunks
+      ruler: loki-ruler
+      admin: loki-admin
+    type: s3
+    s3:
+      endpoint: ${endpoint}
+      secretAccessKey: ${access_key_id}
+      accessKeyId: ${access_key_id}
+      insecure: true
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 write:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 read:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 backend:
   extraArgs:
   - "-config.expand-env=true"
-  extraEnv:
-  - name: STORAGE_ACCOUNT_ACCESS_KEY
-    valueFrom:
-      secretKeyRef:
-        name: stdstoragelog01-access-key
-        key: accountKey
+  extraEnvFrom:
+  - secretRef:
+      name: minio-access-key
 
 test:
   enabled: false

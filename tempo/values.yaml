@@ -9,7 +9,7 @@ storage:
   trace:
     backend: s3
     s3:
-      bucket: ${bucket}
+      bucket: tempo
       endpoint: ${endpoint}
       access_key: ${access_key_id}
       secret_key: ${access_key_secret} 

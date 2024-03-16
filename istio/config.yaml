@@ -13,3 +13,27 @@ spec:
       opentelemetry:
         port: 4317
         service: opentelemetry-collector.observability.svc.cluster.local
+  components:
+    ingressGateways:
+      - namespace: istio-system
+        name: istio-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            ports:
+              - port: 15021
+                targetPort: 15021
+                name: status-port
+                protocol: TCP
+              - port: 80
+                targetPort: 8080
+                name: http2
+                protocol: TCP
+              - port: 443
+                targetPort: 8443
+                name: https
+                protocol: TCP
+              - port: 16221
+                targetPort: 16221
+                name: http-custom-1
+                protocol: TCP

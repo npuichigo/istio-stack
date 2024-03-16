@@ -12,9 +12,13 @@ spec:
     type: parentbased_traceidratio
     argument: "1"
   python:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:latest
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.41b0
     env:
       - name: OTEL_LOGS_EXPORTER
         value: otlp_proto_http
       - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
         value: 'true'
+      - name: OTEL_PYTHON_LOG_CORRELATION
+        value: 'true'
+      - name: OTEL_PYTHON_LOG_LEVEL
+        value: 'debug'

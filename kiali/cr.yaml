@@ -1,0 +1,27 @@
+apiVersion: kiali.io/v1alpha1
+kind: Kiali
+metadata:
+  name: kiali
+spec:
+  external_services:
+    prometheus:
+      # Prometheus service name is "metrics" and is in the "telemetry" namespace
+      url: "http://prom-kube-prometheus-stack-prometheus.prometheus:9090/"
+    tracing:
+      enabled: true
+      # grpc port defaults to 9095
+      grpc_port: 9095 
+      in_cluster_url: "http://tempo-query-frontend.observability:3100/"
+      provider: "tempo"
+      use_grpc: true
+    grafana:
+      enabled: true
+      in_cluster_url: 'http://prom-grafana.prometheus/'
+      url: 'http://prom-grafana.prometheus/'
+      dashboards:
+      - name: "Istio Service Dashboard"
+      - name: "Istio Workload Dashboard"
+      - name: "Istio Mesh Dashboard"
+      - name: "Istio Control Plane Dashboard"
+      - name: "Istio Performance Dashboard"
+      - name: "Istio Wasm Extension Dashboard"
